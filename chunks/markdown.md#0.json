@@ -1,0 +1,8 @@
+{
+  "id": "markdown.md#0",
+  "post_urls": [
+    "https://tds.s-anand.net/#/markdown.md",
+    "https://tds.s-anand.net/#/../markdown.md"
+  ],
+  "content": "## Documentation: Markdown\n\nMarkdown is a lightweight markup language for creating formatted text using a plain-text editor. It's the standard for documentation in software projects and data science notebooks. Watch this introduction to Markdown (19 min):\n\n[! [Markdown Crash Course (19 min)](https://i.ytimg.com/vi_webp/HUBNt18RFbo/sddefault.webp)](https://youtu.be/HUBNt18RFbo)\n\nCommon Markdown syntax:\n\n````\n# Heading 1\n## Heading 2\n\n**bold** and *italic*\n\n- Bullet point\n- Another point\n  - Nested point\n\n1. Numbered list\n2. Second item\n\n[Link text](https://url.com)\n! [Image alt](image.jpg)\n\n| Column 1 | Column 2 |\n|----------|----------|\n| Cell 1   | Cell 2   |\n\n```python\n# Code block\ndef hello():\n    print(\"Hello\")\n```\n\n> Blockquote\n````\n\nTools for working with Markdown:\n\n- [markdown2](https://pypi.org/project/markdown2/): Python library to convert Markdown to HTML\n- [markdownlint](https://github.com/DavidAnson/markdownlint): Linting\n- [Markdown All in One](https://marketplace.visualstudio.com/items?itemName=yzhang.markdown-all-in-one): VS Code extension\n- [pandoc](https://pandoc.org/): Convert between formats"
+}

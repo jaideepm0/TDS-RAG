@@ -5,9 +5,8 @@
 #     'openai',
 #     'python-dotenv',
 #     'pydantic',
-#     'chromadb',
-#     'lancedb',
-#     'duckdb',
+#     'numpy',
+#     'scikit-learn',
 # ]
 # ///
 
@@ -16,19 +15,27 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 from pydantic import BaseModel
-from typing import List
+from typing import List, Tuple
 import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
 from openai import OpenAI
 
 load_dotenv()
 
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+# === API key ===
+client = OpenAI()
+client.api_key = os.getenv("OPENAI_API_KEY")
 
 # === Config ===
 EMBEDDINGS_PATH = "embeddings.npz"
-TOP_K = 3  # number of chunks to retrieve
-SYSTEM_PROMPT = "You are a helpful assistant using retrieved context to answer the question."
+TOP_K = 5  # how many relevant chunks to retrieve
+SYSTEM_PROMPT = (
+        "You are an virtual assistant for course Tools in Data Science."
+        "Need to respond to user questions based on provided context."
+        "Use the context to answer the question as accurately as possible."
+        "If the context does not contain enough information, say 'I don't know'."
+        "Generate a concise, clear answer in Markdown format."
+        )
 USER_PROMPT_TEMPLATE = """Context:
 {context}
 
@@ -36,35 +43,60 @@ Question:
 {question}
 """
 
-# Initialize
+# === FastAPI init ===
 app = FastAPI()
-client = OpenAI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Adjust as needed for production
+    allow_origins=["*"],  # adjust for prod
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Load embeddings and chunks
+# === Load embeddings and content ===
 data = np.load(EMBEDDINGS_PATH, allow_pickle=True)
-chunks = data['chunks']   # list of strings
-embeddings = data['embeddings']  # numpy array
+texts = data['text_content']  # np.array of str
+urls = data['urls']           # np.array of str
+embeddings = data['embeddings']
 
-if len(chunks) != len(embeddings):
-    raise ValueError("Mismatch between number of chunks and embeddings.")
+# if len(texts) != len(urls) or len(urls) != len(embeddings):
+#     raise ValueError("Mismatch: text_content, urls, and embeddings must have the same length.")
 
-# === Request Schema ===
+# === Request schema ===
 class QueryRequest(BaseModel):
     question: str
-    image: str = None  # optional, you can pass base64
+    image: str | None = None  # base64 (data URL)
 
 
-# === Helper: Embed query ===
+# === Image description helper ===
+def describe_image(image_data: str) -> str:
+    """
+    Given a base64 data URL, get image description via LLM.
+    """
+    system_prompt = (
+        "You are a precise assistant. "
+        "Look at the image and write a clear, factual, concise Markdown description. "
+        "Do NOT hallucinate. No extra text."
+    )
+    response = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[
+            {"role": "system", "content": system_prompt},
+            {
+                "role": "user",
+                "content": [
+                    {"type": "text", "text": "Describe this image in Markdown:"},
+                    {"type": "image_url", "image_url": {"url": image_data}}
+                ]
+            }
+        ]
+    )
+    return response.choices[0].message.content.strip()
+
+
+# === Embed query ===
 def embed_query(text: str) -> np.ndarray:
-    # For real usage, replace with your own embedding model if needed
     embedding = client.embeddings.create(
         model="text-embedding-3-large",
         input=text
@@ -72,30 +104,45 @@ def embed_query(text: str) -> np.ndarray:
     return np.array(embedding.data[0].embedding).reshape(1, -1)
 
 
-# === Helper: Retrieve top-k ===
-def retrieve_top_k(question: str, k: int) -> List[str]:
+def retrieve_top_k(question: str, k: int) -> List[Tuple[str, str]]:
+    """
+    Returns list of (text, url) tuples for top-k chunks.
+    """
     query_embedding = embed_query(question)
     scores = cosine_similarity(query_embedding, embeddings)[0]
     top_indices = np.argsort(scores)[::-1][:k]
-    return [chunks[i] for i in top_indices]
+    return [(texts[i], urls[i]) for i in top_indices]
 
 
-# === Endpoint ===
+# === RAG Endpoint ===
 @app.post("/api")
 async def rag_api(request: QueryRequest):
     question = request.question
-    image_data = request.image  # not used here, just passed along if needed
+    image_data = request.image
 
+    # If image, describe it and append to question
+    if image_data:
+        try:
+            image_description = describe_image(image_data)
+            question = f"{question}\nImage Description:\n{image_description}"
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"Image description failed: {e}")
+
+    # Retrieve top-K (text + url pairs)
     try:
-        top_chunks = retrieve_top_k(question, TOP_K)
+        top_chunks_with_urls = retrieve_top_k(question, TOP_K)
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=f"Retrieval failed: {e}")
+
+    # Extract just text parts for prompt
+    top_texts = [t for t, _ in top_chunks_with_urls]
 
     prompt = USER_PROMPT_TEMPLATE.format(
-        context="\n\n".join(top_chunks),
+        context="\n\n".join(top_texts),
         question=question
     )
 
+    # Generate answer
     try:
         response = client.chat.completions.create(
             model="gpt-4o",
@@ -106,9 +153,12 @@ async def rag_api(request: QueryRequest):
         )
         answer = response.choices[0].message.content
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=f"Generation failed: {e}")
+
+    # Format links for response
+    links = [{"url": u, "text": t} for t, u in top_chunks_with_urls]
 
     return {
         "answer": answer,
-        "top_chunks": top_chunks
+        "links": links
     }
