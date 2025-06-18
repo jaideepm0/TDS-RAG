@@ -1,0 +1,10 @@
+[
+  {
+    "id": "pyq-doubt/172373#0",
+    "post_urls": [
+      "https://discourse.onlinedegree.iitm.ac.in/t/pyq-doubt/172373/1",
+      "https://discourse.onlinedegree.iitm.ac.in/t/pyq-doubt/172373/2"
+    ],
+    "content": "```markdown\n# Multiple Choice Question\n\n### Question Number: 307  \n**Question ID:** 6406531045319  \n**Question Type:** MCQ  \n**Correct Marks:** 1  \n\n**Question Label:** Which of the following methods is best for identifying if a log entry's timestamp corresponds to a Saturday? *(timestamp is a method in the datetime library)*\n\n### Options:\n1. **6406533529040. **  \n   Check if `timestamp.weekday() == 5`  \n   *(Incorrect)*\n\n2. **6406533529041. **  \n   Check if `timestamp.weekday() == 6`  \n   *(Correct)*\n\n3. **6406533529042. **  \n   Check if `timestamp.strftime('%A') == 'Saturday'`  \n   *(Incorrect)*\n\n4. **6406533529043. **  \n   Check if `timestamp.dayname() == 'Saturday'`  \n   *(Incorrect)*\n```\n\n  \n[@carlton](/u/carlton) sir plz review it  \ni think the correct answer should be A yes saturday is 5 when using weekday ()"
+  }
+]

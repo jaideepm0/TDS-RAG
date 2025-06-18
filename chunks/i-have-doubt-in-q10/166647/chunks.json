@@ -1,0 +1,10 @@
+[
+  {
+    "id": "i-have-doubt-in-q10/166647#0",
+    "post_urls": [
+      "https://discourse.onlinedegree.iitm.ac.in/t/i-have-doubt-in-q10/166647/1",
+      "https://discourse.onlinedegree.iitm.ac.in/t/i-have-doubt-in-q10/166647/2"
+    ],
+    "content": "I have doubt in question 10 to convert pdf to markdown  \nI am not getting correct markdown  \n[@pds\\_staff](/u/pds_staff) Try using the pymupdf4llm Library  \npip install pymupdf4llm\n\nimport pymupdf4llm  \nmd\\_text = pymupdf4llm.to\\_markdown(“input.pdf”)\n\nimport pathlib  \npathlib.Path(“output.md”).write\\_bytes(md\\_text.encode())\n\nimport pymupdf4llm  \nllama\\_reader = pymupdf4llm.LlamaMarkdownReader()  \nllama\\_docs = llama\\_reader.load\\_data(“input.pdf”)"
+  }
+]
