@@ -1,7 +1,7 @@
 ### NOTE:
-**Every LLM request has been sent with my personal OpenAI key. 
+**Every LLM request has been sent with my personal OPENAI_API_KEY key. 
 I haven't used the keys provided by the TDS team. 
-Not to waste their credits when I can just pay few dollars for my own**
+Not to waste their credits as I already have a KEY**
 
 ### Building commands
 
