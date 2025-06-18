@@ -1,0 +1,25 @@
+```markdown
+# Project 1 Evaluation Summary
+
+Project 1 requires you to pass some pre-requisite checks as detailed on the [TDS Project 1: Evaluation](link) page:
+
+1. Your GitHub repository exists and is publicly accessible
+2. Your GitHub repository has a LICENSE file with the MIT license
+3. Your GitHub repository has a valid Dockerfile
+4. Your Docker image is publicly accessible and runs via podman run -e AIPROXY_TOKEN=$AIPROXY_TOKEN -p 8000:8000 $IMAGE_NAME
+5. Your Docker image uses the same Dockerfile as in your GitHub repository
+
+If you fail to meet this minimum requirement your submission will not get evaluated.
+
+## Project 1 Prerequisite Evaluations:
+
+- **Is Docker image present in Dockerhub AND is public:** PASS
+- **Is GitHub repo present AND public:** FAIL
+- **Is Dockerfile present in root of GitHub repo:** FAIL
+- **Is MIT license present at root of GitHub repo:** FAIL
+
+### Overall Evaluation:
+
+**Prerequisites:** FAIL  
+**Project 1 Score:** 0
+```
