@@ -48,4 +48,4 @@ np.savez_compressed(
     embeddings=embeddings
 )
 
-print(f"✅ Updated file saved as embeddings_updated.npz")
+print(f"✅ Updated file saved as embeddings.npz")
