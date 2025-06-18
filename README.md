@@ -1,4 +1,10 @@
+### NOTE:
+**Every LLM request has been sent with my personal OpenAI key. 
+I haven't used the keys provided by the TDS team. 
+Not to waste their credits when I can just pay few dollars for my own**
+
 ### Building commands
+
 ```bash
 uv run scrape.py
 git clone --branch tds-2025-01 --single-branch https://github.com/sanand0/tools-in-data-science-public.git
@@ -10,8 +16,8 @@ uv run update.py
 uv run app.py
 ```
 
-> NOTE:
-- The errors might be throw but that doesn't happen if you have the cached file directories in the repo.
+> Disclaimer:
+- The errors might be thrown but that doesn't happen if you have the cached file directories in the repo.
 - Every file is created programmatically so no need to worry about the files.
 > Reason for errors:
 - To know at what point something gone wrong. and cache them (so no errors were caught properly.)
@@ -39,3 +45,10 @@ git push origin main
 ---
 
 **Discourse scraping file** -> `scrape.py`
+
+### My Env Setup
+```bash
+sudo pacman -S git git-lfs python uv 
+export OPENAI_API_KEY=my-personal-key >> ~/.zshrc
+export OPENAI_API_KEY=my-personal-key >> ~/.bashrc
+```
