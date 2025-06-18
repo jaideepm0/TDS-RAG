@@ -115,7 +115,6 @@ def retrieve_top_k(question: str, k: int) -> List[Tuple[str, str]]:
 
 
 # === RAG Endpoint ===
-@app.post('/execute')
 @app.post('/api')
 async def rag_api(request: QueryRequest):
     question = request.question
