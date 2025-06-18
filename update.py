@@ -42,7 +42,7 @@ for urls in urls_list:
 
 # === Save updated ===
 np.savez_compressed(
-    "embeddings_updated.npz",
+    "embeddings.npz",
     text_content=text_content,
     urls=np.array(updated_urls, dtype=object),
     embeddings=embeddings
