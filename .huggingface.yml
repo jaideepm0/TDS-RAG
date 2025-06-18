@@ -1,0 +1,12 @@
+# .huggingface.yml
+
+# ✅ This tells HF Spaces you are using a custom Dockerfile
+# and it will build & run using your Docker image.
+# No requirements.txt or extra build steps needed.
+
+spaces:
+  sdk: docker
+  # optional: hardware spec, e.g. cpu-basic
+  # hardware: cpu-basic
+  # optional: hugging face uses port 7860 for web apps by default
+  # no need to override if you expose 7860 in Dockerfile

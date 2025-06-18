@@ -42,6 +42,7 @@ def date_filter(inp: str) -> bool:
 
 def scrape(url):
 
+
     for i in tqdm(range(20)):  # goes till august 2024 so very very safe to have 20
 
         """scraping and caching them safely so no issue will occur for posts extraction"""
@@ -100,9 +101,20 @@ def scrape(url):
                 with open(f'./content/posts/{slug}/{id_}/{key}.json', 'w') as f:
                     json.dump(value, f)
 
+    """Alternate script"""
+    # x = 0
+    # while True:
+    #      {{Scraping Code}}
+    #     x += 1
+    #     data = respone.json()
+    #     if 'more_topics_url' not in data['topic_list'].keys():
+    #         break
+    """Put the below business logic in the place of scraping code to scrape everything in TDS acorss date ranges as you wish
+    Reason not done that way to just save time and space as I am caching the data in content folder
+    """
+
 
 if __name__ == '__main__':
 
     """Check for the variables start_date and end_date and update them to scrape acorss the dates"""
     scrape(url)
-    

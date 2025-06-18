@@ -1,4 +1,4 @@
-# ///// script
+# /// script
 # requires-python = '>=3.13'
 # dependencies = [
 #     'fastapi',
@@ -7,6 +7,7 @@
 #     'pydantic',
 #     'numpy',
 #     'scikit-learn',
+#     'uvicorn',
 # ]
 # ///
 
@@ -49,7 +50,6 @@ app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],  # adjust for prod
-    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -115,7 +115,8 @@ def retrieve_top_k(question: str, k: int) -> List[Tuple[str, str]]:
 
 
 # === RAG Endpoint ===
-@app.post("/api")
+@app.post('/execute')
+@app.post('/api')
 async def rag_api(request: QueryRequest):
     question = request.question
     image_data = request.image
@@ -162,3 +163,13 @@ async def rag_api(request: QueryRequest):
         "answer": answer,
         "links": links
     }
+
+
+@app.get('/')
+async def root():
+    return {"message": "Welcome to the RAG API."}
+
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host='0.0.0.0', port=8000)
